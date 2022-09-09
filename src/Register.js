@@ -5,11 +5,22 @@ import {
 } from "firebase/auth";
 import { auth } from "./FirebaseConfig.js";
 import { Navigate } from "react-router-dom";
+import { collection, addDoc } from "firebase/firestore";
+import db from "./FirebaseConfig";
 
 const Register = () => {
   const [registerName, setRegisterName] = useState("");
   const [registerEmail, setRegisterEmail] = useState("");
   const [registerPassword, setRegisterPassword] = useState("");
+
+  const sendInfo = (e) => {
+    // firebaseのデータベースにデータを追加する
+    e.preventDefault();
+
+    addDoc(collection(db, "users"), {
+      displayName: registerName,
+    });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -69,7 +80,7 @@ const Register = () => {
                 onChange={(e) => setRegisterPassword(e.target.value)}
               />
             </div>
-            <button>新規登録</button>
+            <button onClick={sendInfo}>新規登録</button>
           </form>
         </>
       )}
