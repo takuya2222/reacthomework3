@@ -14,22 +14,24 @@ const Register = () => {
   const [registerPassword, setRegisterPassword] = useState("");
 
   const sendInfo = (e) => {
-    // firebaseのデータベースにデータを追加する
+    // firestoreのデータベースにデータを追加する
     e.preventDefault();
 
     addDoc(collection(db, "users"), {
       displayName: registerName,
     });
+    console.log("test-firestore");
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      await createUserWithEmailAndPassword(
+      createUserWithEmailAndPassword(
         auth,
         registerEmail,
-        registerPassword
+        registerPassword,
+        console.log("test-auth")
       );
     } catch (error) {
       alert("正しく入力してください");
@@ -80,7 +82,11 @@ const Register = () => {
                 onChange={(e) => setRegisterPassword(e.target.value)}
               />
             </div>
-            <button onClick={sendInfo}>新規登録</button>
+            <button
+             onClick={sendInfo}
+            >
+              新規登録
+            </button>
           </form>
         </>
       )}
