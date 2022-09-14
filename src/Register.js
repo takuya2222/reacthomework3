@@ -3,18 +3,20 @@ import {
   createUserWithEmailAndPassword,
   onAuthStateChanged,
 } from "firebase/auth";
-import { auth } from "./FirebaseConfig.js";
 import { Navigate } from "react-router-dom";
-import { collection, addDoc } from "firebase/firestore";
+import { getDocs, collection, addDoc } from "firebase/firestore";
+
 import db from "./FirebaseConfig";
+import { auth } from "./FirebaseConfig.js";
 
 const Register = () => {
   const [registerName, setRegisterName] = useState("");
   const [registerEmail, setRegisterEmail] = useState("");
   const [registerPassword, setRegisterPassword] = useState("");
 
-  const sendInfo = (e) => {
-    // firestoreのデータベースにデータを追加する
+  // firestoreのデータベースにデータを追加する
+  const stockUserInfo = (e) => {
+    // 画面のリロードを防ぐ
     e.preventDefault();
 
     addDoc(collection(db, "users"), {
@@ -32,11 +34,20 @@ const Register = () => {
         registerEmail,
         registerPassword,
         console.log("test-auth")
-      );
+      ) && stockUserInfo(e);
     } catch (error) {
       alert("正しく入力してください");
     }
   };
+
+  useEffect(() => {
+    const userData = collection(db, "users");
+    getDocs(userData).then((querySnapshot) => {
+      setRegisterName(querySnapshot);
+      console.log(querySnapshot.docs.map((doc) => doc.data));
+    });
+    console.log("マウント");
+  }, []);
 
   const [user, setUser] = useState("");
 
@@ -54,6 +65,7 @@ const Register = () => {
       ) : (
         <>
           <h1>新規登録画面</h1>
+          {registerName}
           <form onSubmit={handleSubmit}>
             <div>
               <label>ユーザー名</label>
@@ -82,11 +94,7 @@ const Register = () => {
                 onChange={(e) => setRegisterPassword(e.target.value)}
               />
             </div>
-            <button
-             onClick={sendInfo}
-            >
-              新規登録
-            </button>
+            <button>新規登録</button>
           </form>
         </>
       )}
