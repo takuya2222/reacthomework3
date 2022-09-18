@@ -3,11 +3,11 @@ import {
   createUserWithEmailAndPassword,
   onAuthStateChanged,
 } from "firebase/auth";
+import { auth } from "./FirebaseConfig.js";
 import { Navigate } from "react-router-dom";
 import { getDocs, collection, addDoc } from "firebase/firestore";
 
 import db from "./FirebaseConfig";
-import { auth } from "./FirebaseConfig.js";
 
 const Register = () => {
   const [registerName, setRegisterName] = useState("");
@@ -40,20 +40,14 @@ const Register = () => {
     }
   };
 
-  useEffect(() => {
-    const userData = collection(db, "users");
-    getDocs(userData).then((querySnapshot) => {
-      setRegisterName(querySnapshot);
-      console.log(querySnapshot.docs.map((doc) => doc.data));
-    });
-    console.log("マウント");
-  }, []);
-
   const [user, setUser] = useState("");
 
   // ログイン判定のレンダリングは1度だけでいいのでuseEffectを使う
+  // AuthenticationではonAuthStateChanged関数でログインしているユーザーの情報を確認
+  // これがあると自動的にdashboardにジャンプするみたい（ユーザー登録してある場合）
   useEffect(() => {
     onAuthStateChanged(auth, (currentUser) => {
+      console.log(currentUser);
       setUser(currentUser);
     });
   }, []);
@@ -65,7 +59,6 @@ const Register = () => {
       ) : (
         <>
           <h1>新規登録画面</h1>
-          {registerName}
           <form onSubmit={handleSubmit}>
             <div>
               <label>ユーザー名</label>
