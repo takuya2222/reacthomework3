@@ -18,7 +18,8 @@ const Dashboard = (props) => {
   useEffect(() => {
     const usersCollectionRef = collection(db, "users");
     getDocs(usersCollectionRef).then((querySnapshot) => {
-      setDisplayName(querySnapshot.docs.map((doc) => console.log(doc.data())));
+      setDisplayName(querySnapshot.docs.map((doc) => doc.displayName));
+      console.log(querySnapshot.docs);
     });
   }, []);
 
