@@ -5,7 +5,7 @@ import {
 } from "firebase/auth";
 import { auth } from "./FirebaseConfig.js";
 import { Navigate } from "react-router-dom";
-import { getDocs, collection, addDoc } from "firebase/firestore";
+import { collection, addDoc } from "firebase/firestore";
 
 import db from "./FirebaseConfig";
 
@@ -18,23 +18,20 @@ const Register = () => {
   const stockUserInfo = (e) => {
     // 画面のリロードを防ぐ
     e.preventDefault();
+    const uid = user.uid;
 
     addDoc(collection(db, "users"), {
       displayName: registerName,
+      uid: uid,
     });
-    console.log("test-firestore");
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      createUserWithEmailAndPassword(
-        auth,
-        registerEmail,
-        registerPassword,
-        console.log("test-auth")
-      ) && stockUserInfo(e);
+      createUserWithEmailAndPassword(auth, registerEmail, registerPassword) &&
+        stockUserInfo(e);
     } catch (error) {
       alert("正しく入力してください");
     }
