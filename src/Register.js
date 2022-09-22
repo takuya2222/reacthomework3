@@ -5,21 +5,33 @@ import {
 } from "firebase/auth";
 import { auth } from "./FirebaseConfig.js";
 import { Navigate } from "react-router-dom";
+import { collection, addDoc } from "firebase/firestore";
+
+import db from "./FirebaseConfig";
 
 const Register = () => {
   const [registerName, setRegisterName] = useState("");
   const [registerEmail, setRegisterEmail] = useState("");
   const [registerPassword, setRegisterPassword] = useState("");
 
+  // firestoreのデータベースにデータを追加する
+  const stockUserInfo = (e) => {
+    // 画面のリロードを防ぐ
+    e.preventDefault();
+    const uid = user.uid;
+
+    addDoc(collection(db, "users"), {
+      displayName: registerName,
+      uid: uid,
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      await createUserWithEmailAndPassword(
-        auth,
-        registerEmail,
-        registerPassword
-      );
+      createUserWithEmailAndPassword(auth, registerEmail, registerPassword) &&
+        stockUserInfo(e);
     } catch (error) {
       alert("正しく入力してください");
     }
@@ -28,8 +40,11 @@ const Register = () => {
   const [user, setUser] = useState("");
 
   // ログイン判定のレンダリングは1度だけでいいのでuseEffectを使う
+  // AuthenticationではonAuthStateChanged関数でログインしているユーザーの情報を確認
+  // これがあると自動的にdashboardにジャンプするみたい（ユーザー登録してある場合）
   useEffect(() => {
     onAuthStateChanged(auth, (currentUser) => {
+      console.log(currentUser);
       setUser(currentUser);
     });
   }, []);
