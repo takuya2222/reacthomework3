@@ -15,14 +15,10 @@ const Register = () => {
   const [registerPassword, setRegisterPassword] = useState("");
 
   // firestoreのデータベースにデータを追加する
-  const stockUserInfo = (e) => {
-    // 画面のリロードを防ぐ
-    e.preventDefault();
-    const uid = user.uid;
-
-    addDoc(collection(db, "users"), {
-      displayName: registerName,
-      uid: uid,
+  const stockUserInfo = (userId) => {
+    addDoc(collection(db, "users").doc(userId), {
+      // doc(userId)でドキュメントIDを指定することができる
+      displayName: registerName, // フィールドにはdisplayNameだけを指定する
     });
   };
 
@@ -30,8 +26,13 @@ const Register = () => {
     e.preventDefault();
 
     try {
-      createUserWithEmailAndPassword(auth, registerEmail, registerPassword) &&
-        stockUserInfo(e);
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        registerEmail,
+        registerPassword
+      ); // 字の如くmailとpasswordでユーザー作成
+      const userId = userCredential.user.uid; // ユーザーのuidを取得
+      stockUserInfo(userId); // stockUserInfoを呼び出してユーザーをfirestoreに作成(その時のドキュメントIDをユーザーのuidにする)
     } catch (error) {
       alert("正しく入力してください");
     }
@@ -44,7 +45,6 @@ const Register = () => {
   // これがあると自動的にdashboardにジャンプするみたい（ユーザー登録してある場合）
   useEffect(() => {
     onAuthStateChanged(auth, (currentUser) => {
-      console.log(currentUser);
       setUser(currentUser);
     });
   }, []);
