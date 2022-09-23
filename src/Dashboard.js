@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./FirebaseConfig.js";
 import db from "./FirebaseConfig";
-import { doc, collection, getDoc, querySnapshot } from "firebase/firestore";
+import { doc, getDoc, querySnapshot } from "firebase/firestore";
 
 const Dashboard = () => {
   const [userDetail, setUserDetail] = useState({});
@@ -14,14 +14,6 @@ const Dashboard = () => {
       setUser(currentUser); //setUserで取得したユーザーを入れている
     });
   }, []);
-
-  // useEffect(() => {
-  //   const usersCollectionRef = collection(db, "users");
-  //   getDoc(usersCollectionRef).then((querySnapshot) => {
-  //     setUserDetail(querySnapshot.docs.map((doc) => doc.data()));
-  //     console.log(querySnapshot.docs);
-  //   });
-  // }, []);
 
   useEffect(() => {
     (async () => {
