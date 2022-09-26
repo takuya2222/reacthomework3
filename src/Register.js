@@ -31,15 +31,18 @@ const Register = () => {
         registerEmail,
         registerPassword
       ); // 字の如くmailとpasswordでユーザー作成
+      console.log(userCredential);
+
       const userId = userCredential.user.uid; // ユーザーのuidを取得
+      console.log(userId);
       stockUserInfo(userId); // stockUserInfoを呼び出してユーザーをfirestoreに作成(その時のドキュメントIDをユーザーのuidにする)
+      console.log("テスト");
     } catch (error) {
       alert("正しく入力してください");
     }
   };
 
   const [user, setUser] = useState("");
-
   // ログイン判定のレンダリングは1度だけでいいのでuseEffectを使う
   // AuthenticationではonAuthStateChanged関数でログインしているユーザーの情報を確認
   // これがあると自動的にdashboardにジャンプするみたい（ユーザー登録してある場合）
