@@ -5,7 +5,8 @@ import {
 } from "firebase/auth";
 import { auth } from "./FirebaseConfig.js";
 import { Navigate } from "react-router-dom";
-import { collection, addDoc } from "firebase/firestore";
+// import { collection, addDoc } from "firebase/firestore";
+// import "firebase/compat/firestore";
 
 import db from "./FirebaseConfig";
 
@@ -15,10 +16,10 @@ const Register = () => {
   const [registerPassword, setRegisterPassword] = useState("");
 
   // firestoreのデータベースにデータを追加する
-  const stockUserInfo = (userId) => {
-    addDoc(collection(db, "users").doc(userId), {
-      // doc(userId)でドキュメントIDを指定することができる
-      displayName: registerName, // フィールドにはdisplayNameだけを指定する
+  const stockUserInfo = async (userId) => {
+    const userRef = db.collection("users").doc(userId);
+    await userRef.set({
+      displayName: registerName,
     });
   };
 
